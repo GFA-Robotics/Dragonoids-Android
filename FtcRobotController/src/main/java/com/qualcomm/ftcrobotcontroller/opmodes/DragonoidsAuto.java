@@ -20,11 +20,6 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     private float lastGyroTimestamp = 0;
     private float heading = 0; // In radians
     private float headingDegrees = 0; // In degrees (use in autonomous flow)
-    private final float secondsToCalibrate = 5;
-    private boolean calibrationComplete = false;
-    private float firstGyroTimestamp = 0;
-    private float totalError = 0;
-    private double headingCompensation = 0;
     // Autonomous constants
     private final double drivePower = 0.4;
     private final double driveMinPower = 0.35;
