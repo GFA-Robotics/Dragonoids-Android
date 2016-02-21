@@ -26,8 +26,9 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     private float totalError = 0;
     private double headingCompensation = 0;
     // Autonomous constants
-    private final double drivePower = 0.5;
-    private final double turnPower = 0.3;
+    private final double drivePower = 0.4;
+    private final double driveMinPower = 0.35;
+    private final double turnPower = 0.4;
     private final int step1Distance = 500;
     private final int step2Distance = 2000;
     private final int step3Distance = 500;
@@ -47,7 +48,10 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     }
     private void outputTelemetry() {
         telemetry.addData("Heading", headingDegrees);
-        telemetry.addData("Runtime", getRuntime());
+        telemetry.addData("RightOne", DragonoidsGlobal.rightOne.getCurrentPosition());
+        telemetry.addData("RightTwo", DragonoidsGlobal.rightTwo.getCurrentPosition());
+        telemetry.addData("Left  One", DragonoidsGlobal.leftOne.getCurrentPosition());
+        telemetry.addData("Left  Two", DragonoidsGlobal.leftTwo.getCurrentPosition());
     }
     // For gyro sensor data
     @Override
@@ -55,26 +59,8 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         if (event.sensor.getType() != this.sensorType) return;
 
         final float dT = (event.timestamp - lastGyroTimestamp) * nanoSecondsToSeconds;
-        if (lastGyroTimestamp != 0 && !calibrationComplete) {
-            if (firstGyroTimestamp == 0) {
-                firstGyroTimestamp = event.timestamp;
-            }
-            if ((event.timestamp - firstGyroTimestamp) * nanoSecondsToSeconds < secondsToCalibrate) {
-                // Keep measuring error
-                // Gyroscope event.values[2] is the z-axis according to https://developer.android.com/images/axis_device.png
-                totalError += dT * event.values[2];
-            }
-            else {
-                // Done calibrating
-                headingCompensation = totalError / ((event.timestamp - firstGyroTimestamp) * nanoSecondsToSeconds);
-                calibrationComplete = true;
-                // Make a sound to notify that calibration is complete
-                ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-                toneGenerator.startTone(ToneGenerator.TONE_CDMA_PRESSHOLDKEY_LITE);
-            }
-        }
-        if (lastGyroTimestamp != 0 && calibrationComplete) {
-            heading += (dT * event.values[2]) - (dT * headingCompensation);
+        if (lastGyroTimestamp != 0) {
+            heading += (dT * event.values[2]);
             headingDegrees = (float) Math.toDegrees(heading);
         }
         lastGyroTimestamp = event.timestamp;
@@ -126,18 +112,18 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         float startingRotation = this.headingDegrees;
         float targetRotation;
 
-        if (direction == Direction.Left) {
+        if (direction == Direction.Right) {
             targetRotation = startingRotation - degrees;
             while (this.headingDegrees > targetRotation) {
-                DragonoidsGlobal.setDrivePower(-turnPower, turnPower);
+                DragonoidsGlobal.setDrivePower(turnPower, -turnPower);
                 waitOneFullHardwareCycle();
             }
         }
 
-        if (direction == Direction.Right) {
+        if (direction == Direction.Left) {
             targetRotation = startingRotation + degrees;
             while (this.headingDegrees < targetRotation) {
-                DragonoidsGlobal.setDrivePower(turnPower, -turnPower);
+                DragonoidsGlobal.setDrivePower(-turnPower, turnPower);
                 waitOneFullHardwareCycle();
             }
         }
@@ -169,8 +155,15 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         DragonoidsGlobal.stopMotors();
     }
 
+    protected enum Alliance {
+        Red, Blue
+    }
     @Override
     public void runOpMode() throws InterruptedException {
+        // Change this and upload depending on alliance color
+        final Alliance alliance = Alliance.Blue;
+        final Direction turnDirection = (alliance == Alliance.Blue) ? Direction.Right : Direction.Left;
+
         try {
             this.initialize();
             waitForStart();
@@ -182,17 +175,34 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
             //this.drive(Direction.Forward, step1Distance);
             this.driveTime(Direction.Forward, 1000);
             // Use the phone's IMU to make a precise 45 degree turn
-            this.turn(Direction.Left, 45);
+            this.turn(turnDirection, 45);
             // Drive forward to the beacon zone
             //this.drive(Direction.Forward, step2Distance);
-            this.driveTime(Direction.Forward, 1000);
+            this.driveTime(Direction.Forward, 2500);
             // Turn 45 degrees again
-            this.turn(Direction.Left, 45);
+            this.turn(turnDirection, 40);
             // Drive forward to color detection distance
             //this.drive(Direction.Forward, step3Distance);
-            this.driveTime(Direction.Forward, 1000);
+            double odsStartTime = getRuntime();
+            double maxRunTime = 10; // 10 seconds before watchdog timer kicks in and stops the robot
+            while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.1 && (getRuntime() - odsStartTime) < maxRunTime) {
+                DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
+                waitOneFullHardwareCycle();
+            }
+            DragonoidsGlobal.stopMotors();
+            // Deposit climbers into bucket
+            DragonoidsGlobal.autonomousClimbers.setPosition(0.0);
+            sleep(1000);
+            DragonoidsGlobal.autonomousClimbers.setPosition(1.0);
             // Detect color of the beacon
+            if (DragonoidsGlobal.colorSensor.red() > DragonoidsGlobal.colorSensor.blue()) {
+                // Red color detected
 
+            }
+            else {
+                // Blue color detected
+
+            }
             // Drive forward or extend arm to push the correct button
 
             // Deposit climbers in the bucket behind the beacon

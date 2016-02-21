@@ -14,7 +14,7 @@ public class DragonoidsGlobal {
     // Slider motors
     public static DcMotor leftSlider, rightSlider;
     // Servos
-    public static Servo gate, rightClimber, leftClimber;
+    public static Servo rightClimber, leftClimber, autonomousClimbers;
     // Sensors
     public static ColorSensor colorSensor;
     public static OpticalDistanceSensor opticalDistanceSensor;
@@ -25,8 +25,8 @@ public class DragonoidsGlobal {
         leftOne = hardwareMap.dcMotor.get("leftOneDrive");
         leftTwo = hardwareMap.dcMotor.get("leftTwoDrive");
 
-        rightTwo.setDirection(DcMotor.Direction.REVERSE);
-        leftOne.setDirection(DcMotor.Direction.REVERSE);
+        rightOne.setDirection(DcMotor.Direction.REVERSE);
+        leftTwo.setDirection(DcMotor.Direction.REVERSE);
 
         conveyor = hardwareMap.dcMotor.get("conveyor");
         dispenser = hardwareMap.dcMotor.get("dispenser");
@@ -36,9 +36,9 @@ public class DragonoidsGlobal {
 
         leftSlider.setDirection(DcMotor.Direction.REVERSE);
 
-        gate = hardwareMap.servo.get("gate");
         rightClimber = hardwareMap.servo.get("rightClimber");
         leftClimber = hardwareMap.servo.get("leftClimber");
+        autonomousClimbers = hardwareMap.servo.get("autonomousClimbers");
         resetServos();
 
         colorSensor = hardwareMap.colorSensor.get("color");
@@ -55,9 +55,9 @@ public class DragonoidsGlobal {
     }
 
     public static void resetServos(){
-        gate.setPosition(0.75);
         rightClimber.setPosition(0.0);
         leftClimber.setPosition(0.0);
+        autonomousClimbers.setPosition(1.0);
     }
 
     public static void stopMotors() {

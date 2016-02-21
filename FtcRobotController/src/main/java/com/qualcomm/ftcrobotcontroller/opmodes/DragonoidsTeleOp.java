@@ -14,8 +14,8 @@ public class DragonoidsTeleOp extends OpMode {
     @Override
     public void loop() {
         // Joystick values range from -1 to 1
-        float forwardAmount = gamepad1.left_stick_y;
-        float turningAmount = gamepad1.right_stick_x;
+        float forwardAmount = -gamepad1.left_stick_y;
+        float turningAmount = -gamepad1.right_stick_x;
 
         forwardAmount = Range.clip(scaleInput(forwardAmount), -1, 1);
         turningAmount = Range.clip(scaleInput(turningAmount), -1, 1);
@@ -48,33 +48,33 @@ public class DragonoidsTeleOp extends OpMode {
             DragonoidsGlobal.conveyor.setPower(0.0);
         }
 
-        // Gate
-        final double gateOpen = 0.0;
-        final double gateClosed = 0.75;
-        if (gamepad2.a){
-            // Open the gate
-            DragonoidsGlobal.gate.setPosition(gateOpen);
-        }
-        else {
-            // Close the gate
-            DragonoidsGlobal.gate.setPosition(gateClosed);
-        }
         // Climber release
         final double rightClimberOpen = 0.0;
         final double rightClimberClosed = 0.5;
         final double leftClimberOpen = 0.0;
         final double leftClimberClosed = 0.5;
-        if (gamepad2.right_bumper) {
+        final double autonomousClimbersClosed = 1.0;
+        final double autonomousClimbersOpen = 0.0;
+        // Red B button for releasing climbers when in red alliance
+        if (gamepad2.b) {
             DragonoidsGlobal.rightClimber.setPosition(rightClimberOpen);
         }
         else {
             DragonoidsGlobal.rightClimber.setPosition(rightClimberClosed);
         }
-        if (gamepad2.left_bumper) {
+        // Blue X button for releasing climbers when in red alliance
+        if (gamepad2.x) {
             DragonoidsGlobal.leftClimber.setPosition(leftClimberOpen);
         }
         else {
             DragonoidsGlobal.leftClimber.setPosition(leftClimberClosed);
+        }
+        // Y button for testing
+        if (gamepad2.y) {
+            DragonoidsGlobal.autonomousClimbers.setPosition(autonomousClimbersOpen);
+        }
+        else {
+            DragonoidsGlobal.autonomousClimbers.setPosition(autonomousClimbersClosed);
         }
 
         // Slider
@@ -97,7 +97,7 @@ public class DragonoidsTeleOp extends OpMode {
 
         // Dispenser
         final double dispenserMaxPower = 0.80;
-        final double dispenserMidPower = 0.30;
+        final double dispenserMidPower = 0.20;
         final double controlRange = 0.20;
         final double threshold = 0.10;
         // Negate values because pushing the stick forward yields a negative position
