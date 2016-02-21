@@ -28,6 +28,13 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     private final int step2Distance = 2000;
     private final int step3Distance = 500;
 
+    protected enum Alliance {
+        Red, Blue
+    }
+    protected enum Direction {
+        Right, Left, Forward, Backward
+    }
+
     public void initialize() {
         DragonoidsGlobal.init(hardwareMap);
         DragonoidsGlobal.stopAll();
@@ -41,7 +48,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
             telemetry.addData("Error", "Gyroscope sensor not found");
         }
     }
-    private void outputTelemetry() {
+    protected void outputTelemetry() {
         telemetry.addData("Heading", headingDegrees);
         telemetry.addData("RightOne", DragonoidsGlobal.rightOne.getCurrentPosition());
         telemetry.addData("RightTwo", DragonoidsGlobal.rightTwo.getCurrentPosition());
@@ -99,10 +106,6 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         return total / 2;
     }
 
-    protected enum Direction {
-        Right, Left, Forward, Backward
-    }
-
     public void turn(Direction direction, float degrees) throws InterruptedException {
         float startingRotation = this.headingDegrees;
         float targetRotation;
@@ -150,72 +153,65 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         DragonoidsGlobal.stopMotors();
     }
 
-    protected enum Alliance {
-        Red, Blue
+    public void autonomous(Alliance alliance) throws InterruptedException {
+        this.initialize();
+        // Set turning direction for first movements based on alliance color
+        // If blue, turn right; if red, turn left
+        final Direction turnDirection = (alliance == Alliance.Blue) ? Direction.Right : Direction.Left;
+        waitForStart();
+        // Run the conveyor backwards so that debris doesn't get caught in the robot
+        DragonoidsGlobal.conveyor.setPower(-0.25);
+        // Choose flow based on alliance color (we're assuming red)
+
+        // Drive forward a bit
+        //this.drive(Direction.Forward, step1Distance);
+        this.driveTime(Direction.Forward, 1000);
+        // Use the phone's IMU to make a precise 45 degree turn
+        this.turn(turnDirection, 45);
+        // Drive forward to the beacon zone
+        //this.drive(Direction.Forward, step2Distance);
+        this.driveTime(Direction.Forward, 2500);
+        // Turn 45 degrees again
+        this.turn(turnDirection, 40);
+        // Drive forward to color detection distance
+        //this.drive(Direction.Forward, step3Distance);
+        double odsStartTime = getRuntime();
+        double maxRunTime = 10; // 10 seconds before watchdog timer kicks in and stops the robot
+        while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.1 && (getRuntime() - odsStartTime) < maxRunTime) {
+            DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
+            waitOneFullHardwareCycle();
+        }
+        DragonoidsGlobal.stopMotors();
+        // Deposit climbers into bucket
+        DragonoidsGlobal.autonomousClimbers.setPosition(0.0);
+        sleep(1000);
+        DragonoidsGlobal.autonomousClimbers.setPosition(1.0);
+        // Detect color of the beacon
+        if (DragonoidsGlobal.colorSensor.red() > DragonoidsGlobal.colorSensor.blue()) {
+            // Red color detected
+
+        }
+        else {
+            // Blue color detected
+
+        }
+        // Drive forward or extend arm to push the correct button
+
+        // Deposit climbers in the bucket behind the beacon
+
+        // Reverse out of the beacon area (or turn 180 degrees and then drive forward)
+
+        // Turn -45 degrees
+
+        // Drive forward as far as possible up the mountain
+
+        // Use the "churro grabbers" to gain more traction and hoist the robot up the
+        // remaining portion of the mountain after the normal wheels begin to slip
+
+        DragonoidsGlobal.stopAll();
     }
     @Override
     public void runOpMode() throws InterruptedException {
-        // Change this and upload depending on alliance color
-        final Alliance alliance = Alliance.Blue;
-        final Direction turnDirection = (alliance == Alliance.Blue) ? Direction.Right : Direction.Left;
 
-        try {
-            this.initialize();
-            waitForStart();
-            // Run the conveyor backwards so that debris doesn't get caught in the robot
-            DragonoidsGlobal.conveyor.setPower(-0.25);
-            // Choose flow based on alliance color (we're assuming red)
-
-            // Drive forward a bit
-            //this.drive(Direction.Forward, step1Distance);
-            this.driveTime(Direction.Forward, 1000);
-            // Use the phone's IMU to make a precise 45 degree turn
-            this.turn(turnDirection, 45);
-            // Drive forward to the beacon zone
-            //this.drive(Direction.Forward, step2Distance);
-            this.driveTime(Direction.Forward, 2500);
-            // Turn 45 degrees again
-            this.turn(turnDirection, 40);
-            // Drive forward to color detection distance
-            //this.drive(Direction.Forward, step3Distance);
-            double odsStartTime = getRuntime();
-            double maxRunTime = 10; // 10 seconds before watchdog timer kicks in and stops the robot
-            while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.1 && (getRuntime() - odsStartTime) < maxRunTime) {
-                DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
-                waitOneFullHardwareCycle();
-            }
-            DragonoidsGlobal.stopMotors();
-            // Deposit climbers into bucket
-            DragonoidsGlobal.autonomousClimbers.setPosition(0.0);
-            sleep(1000);
-            DragonoidsGlobal.autonomousClimbers.setPosition(1.0);
-            // Detect color of the beacon
-            if (DragonoidsGlobal.colorSensor.red() > DragonoidsGlobal.colorSensor.blue()) {
-                // Red color detected
-
-            }
-            else {
-                // Blue color detected
-
-            }
-            // Drive forward or extend arm to push the correct button
-
-            // Deposit climbers in the bucket behind the beacon
-
-            // Reverse out of the beacon area (or turn 180 degrees and then drive forward)
-
-            // Turn -45 degrees
-
-            // Drive forward as far as possible up the mountain
-
-            // Use the "churro grabbers" to gain more traction and hoist the robot up the
-            // remaining portion of the mountain after the normal wheels begin to slip
-
-            DragonoidsGlobal.stopAll();
-        }
-        catch (Exception e) {
-            DragonoidsGlobal.stopAll();
-            throw e;
-        }
     }
 }
