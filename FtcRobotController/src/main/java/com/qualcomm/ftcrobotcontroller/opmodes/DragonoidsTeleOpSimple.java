@@ -39,17 +39,17 @@ public class DragonoidsTeleOpSimple extends OpMode {
         // Conveyor
         if (gamepad1.right_trigger > 0.8) {
             // Turn on the conveyor
-            DragonoidsGlobal.conveyor.setPower(maxConveyorPower * (3 / 3));
+            DragonoidsGlobal.conveyor.setPower(maxConveyorPower * (3.0 / 3.0));
         }
         else if (gamepad1.right_trigger > 0.4) {
-            DragonoidsGlobal.conveyor.setPower(maxConveyorPower * (2 / 3));
+            DragonoidsGlobal.conveyor.setPower(maxConveyorPower * (2.0 / 3.0));
         }
         else if (gamepad1.right_trigger > 0.1) {
-            DragonoidsGlobal.conveyor.setPower(maxConveyorPower * (1 / 3));
+            DragonoidsGlobal.conveyor.setPower(maxConveyorPower * (1.0 / 3.0));
         }
         else if (gamepad1.left_trigger > 0.2) {
             // Reverse the conveyor
-            DragonoidsGlobal.conveyor.setPower(-1 * maxConveyorPower * (2 / 3));
+            DragonoidsGlobal.conveyor.setPower(-1 * maxConveyorPower * (2.0 / 3.0));
         }
         else {
             // Stop conveyor motor
