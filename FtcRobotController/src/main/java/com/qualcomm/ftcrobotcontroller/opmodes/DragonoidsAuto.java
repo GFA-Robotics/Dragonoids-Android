@@ -22,7 +22,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     private float headingDegrees = 0; // In degrees (use in autonomous flow)
     // Autonomous constants
     private final double drivePower = 0.4;
-    private final double driveMinPower = 0.35;
+    private final double driveMinPower = 0.2;
     private final double turnPower = 0.4;
     private final int step1Distance = 500;
     private final int step2Distance = 2000;
@@ -172,7 +172,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         //this.drive(Direction.Forward, step2Distance);
         this.driveTime(Direction.Forward, 2500);
         // Turn 45 degrees again
-        this.turn(turnDirection, 40);
+        this.turn(turnDirection, 45);
         // Drive forward to color detection distance
         //this.drive(Direction.Forward, step3Distance);
         double odsStartTime = getRuntime();
