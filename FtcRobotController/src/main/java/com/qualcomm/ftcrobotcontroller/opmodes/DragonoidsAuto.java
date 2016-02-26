@@ -50,9 +50,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     }
     protected void outputTelemetry() {
         telemetry.addData("Heading", headingDegrees);
-        telemetry.addData("RightOne", DragonoidsGlobal.rightOne.getCurrentPosition());
-        telemetry.addData("RightTwo", DragonoidsGlobal.rightTwo.getCurrentPosition());
-        telemetry.addData("Left  One", DragonoidsGlobal.leftOne.getCurrentPosition());
+        telemetry.addData("Right Two", DragonoidsGlobal.rightTwo.getCurrentPosition());
         telemetry.addData("Left  Two", DragonoidsGlobal.leftTwo.getCurrentPosition());
     }
     // For gyro sensor data
@@ -177,7 +175,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         //this.drive(Direction.Forward, step3Distance);
         double odsStartTime = getRuntime();
         double maxRunTime = 10; // 10 seconds before watchdog timer kicks in and stops the robot
-        while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.1 && (getRuntime() - odsStartTime) < maxRunTime) {
+        while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.02 && (getRuntime() - odsStartTime) < maxRunTime) {
             DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
             waitOneFullHardwareCycle();
         }

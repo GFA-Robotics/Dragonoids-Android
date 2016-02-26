@@ -122,6 +122,8 @@ public class DragonoidsTeleOp extends OpMode {
         //telemetry.addData("Left drive motor power", driveMotors.get("leftOneDrive").getPower());
         //telemetry.addData("Conveyor motor power", DragonoidsGlobal.conveyor.getPower());
         telemetry.addData("Dispenser motor power", DragonoidsGlobal.dispenser.getPower());
+        telemetry.addData("Right Two", DragonoidsGlobal.rightTwo.getCurrentPosition());
+        telemetry.addData("Left  Two", DragonoidsGlobal.leftTwo.getCurrentPosition());
         //telemetry.addData("Servo Position", DragonoidsGlobal.gate.getPosition());
     }
     @Override
