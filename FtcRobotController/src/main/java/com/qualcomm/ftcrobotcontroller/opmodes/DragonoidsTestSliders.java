@@ -11,21 +11,34 @@ public class DragonoidsTestSliders extends OpMode {
     }
     @Override
     public void loop() {
-        final double sliderForwardPower = 1.0;
+        final double sliderForwardPower = 0.75;
         final double sliderBackwardPower = -0.5;
+        final int maxPosition = 5500;
         if (gamepad1.right_bumper) {
             // Move the slider forward
-            DragonoidsGlobal.rightSlider.setPower(sliderForwardPower);
-            DragonoidsGlobal.leftSlider.setPower(sliderForwardPower);
+            //DragonoidsGlobal.rightSlider.setPower(sliderForwardPower);
+            if (DragonoidsGlobal.leftSlider.getCurrentPosition() < maxPosition) {
+                DragonoidsGlobal.leftSlider.setPower(sliderForwardPower);
+            }
         }
         else if (gamepad1.left_bumper) {
             // Reverse the slider
-            DragonoidsGlobal.rightSlider.setPower(sliderBackwardPower);
-            DragonoidsGlobal.leftSlider.setPower(sliderBackwardPower);
+            //DragonoidsGlobal.rightSlider.setPower(sliderBackwardPower);
+            if (DragonoidsGlobal.leftSlider.getCurrentPosition() > 0) {
+                DragonoidsGlobal.leftSlider.setPower(sliderBackwardPower);
+            }
         }
         else {
             DragonoidsGlobal.rightSlider.setPower(0.0);
             DragonoidsGlobal.leftSlider.setPower(0.0);
+        }
+        if (gamepad1.a) {
+            DragonoidsGlobal.rightSlider.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+            DragonoidsGlobal.leftSlider.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        }
+        else {
+            DragonoidsGlobal.rightSlider.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+            DragonoidsGlobal.leftSlider.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
         }
 
         this.outputTelemetry();
