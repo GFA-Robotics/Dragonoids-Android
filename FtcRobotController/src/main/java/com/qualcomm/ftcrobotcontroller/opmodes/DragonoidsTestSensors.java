@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-public class DragonoidsTest extends OpMode {
+public class DragonoidsTestSensors extends OpMode {
     private ColorSensor colorSensor;
     private OpticalDistanceSensor opticalDistanceSensor;
     @Override
