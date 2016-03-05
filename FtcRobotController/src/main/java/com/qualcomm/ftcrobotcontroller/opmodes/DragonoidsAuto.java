@@ -5,11 +5,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 public class DragonoidsAuto extends LinearOpMode implements SensorEventListener {
     // Gyro sensor
@@ -24,9 +21,8 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     private final double drivePower = 0.4;
     private final double driveMinPower = 0.2;
     private final double turnPower = 0.4;
-    private final int step1Distance = 500;
-    private final int step2Distance = 2000;
-    private final int step3Distance = 500;
+    private final int step1Distance = 2000;
+    private final int step2Distance = 6200;
 
     protected enum Alliance {
         Red, Blue
@@ -95,17 +91,12 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         telemetry.addData("Gyro accuracy changed", String.format("%s (%d)", description, accuracy));
     }
 
+    // Encoder values are negated because forward robot movement results in negative values
     public int getRightEncoderValue() {
-        int total = 0;
-        total += DragonoidsGlobal.rightOne.getCurrentPosition();
-        total += DragonoidsGlobal.rightTwo.getCurrentPosition();
-        return total / 2;
+        return -1 * DragonoidsGlobal.rightTwo.getCurrentPosition();
     }
     public int getLeftEncoderValue() {
-        int total = 0;
-        total += DragonoidsGlobal.leftOne.getCurrentPosition();
-        total += DragonoidsGlobal.leftTwo.getCurrentPosition();
-        return total / 2;
+        return -1 * DragonoidsGlobal.leftTwo.getCurrentPosition();
     }
 
     public void turn(Direction direction, float degrees) throws InterruptedException {
@@ -129,14 +120,15 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         }
         DragonoidsGlobal.stopMotors();
     }
-    public void drive(Direction direction, int distance) {
+    public void drive(Direction direction, int distance) throws InterruptedException {
+        if (direction == Direction.Forward) {
+            DragonoidsGlobal.setDrivePower(drivePower, drivePower);
+        }
+        if (direction == Direction.Backward) {
+            DragonoidsGlobal.setDrivePower(-drivePower, -drivePower);
+        }
         while ((this.getLeftEncoderValue() + this.getRightEncoderValue()) / 2 < distance) {
-            if (direction == Direction.Forward) {
-                DragonoidsGlobal.setDrivePower(drivePower, drivePower);
-            }
-            if (direction == Direction.Backward) {
-                DragonoidsGlobal.setDrivePower(-drivePower, -drivePower);
-            }
+            waitOneFullHardwareCycle();
         }
         DragonoidsGlobal.stopMotors();
     }
@@ -163,20 +155,17 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         waitForStart();
         // Run the conveyor backwards so that debris doesn't get caught in the robot
         DragonoidsGlobal.conveyor.setPower(-0.25);
-        // Choose flow based on alliance color (we're assuming red)
-
         // Drive forward a bit
-        //this.drive(Direction.Forward, step1Distance);
-        this.driveTime(Direction.Forward, 1200);
+        this.drive(Direction.Forward, step1Distance);
+        //this.driveTime(Direction.Forward, 1200);
         // Use the phone's IMU to make a precise 45 degree turn
         this.turn(turnDirection, 45);
         // Drive forward to the beacon zone
-        //this.drive(Direction.Forward, step2Distance);
-        this.driveTime(Direction.Forward, 2500);
+        this.drive(Direction.Forward, step2Distance);
+        //this.driveTime(Direction.Forward, 2500);
         // Turn 45 degrees again
         this.turn(turnDirection, 45);
         // Drive forward to color detection distance
-        //this.drive(Direction.Forward, step3Distance);
         double odsStartTime = getRuntime();
         double maxRunTime = 10; // 10 seconds before watchdog timer kicks in and stops the robot
         while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.009 && (getRuntime() - odsStartTime) < maxRunTime) {
