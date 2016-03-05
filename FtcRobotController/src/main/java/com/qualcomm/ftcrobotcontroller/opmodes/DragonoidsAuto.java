@@ -167,7 +167,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
 
         // Drive forward a bit
         //this.drive(Direction.Forward, step1Distance);
-        this.driveTime(Direction.Forward, 1000);
+        this.driveTime(Direction.Forward, 1200);
         // Use the phone's IMU to make a precise 45 degree turn
         this.turn(turnDirection, 45);
         // Drive forward to the beacon zone
@@ -179,7 +179,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         //this.drive(Direction.Forward, step3Distance);
         double odsStartTime = getRuntime();
         double maxRunTime = 10; // 10 seconds before watchdog timer kicks in and stops the robot
-        while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.02 && (getRuntime() - odsStartTime) < maxRunTime) {
+        while (DragonoidsGlobal.opticalDistanceSensor.getLightDetected() < 0.009 && (getRuntime() - odsStartTime) < maxRunTime) {
             DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
             waitOneFullHardwareCycle();
         }
