@@ -1,10 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
-
-import java.util.HashMap;
 
 public class DragonoidsTeleOp extends OpMode {
     private boolean clampActivated = false;
