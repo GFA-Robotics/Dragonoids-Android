@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.HashMap;
 
 public class DragonoidsTeleOp extends OpMode {
+    private boolean clampActivated = false;
+    private boolean clampButtonPressed = false;
+
     @Override
     public void init() {
         DragonoidsGlobal.init(hardwareMap, true);
@@ -117,6 +120,25 @@ public class DragonoidsTeleOp extends OpMode {
         }
         else {
             DragonoidsGlobal.dispenser.setPower(0.0);
+        }
+
+        // Clamps
+        final double clampOpen = 0.0;
+        final double clampClosed = 1.0;
+        if (gamepad1.a && !clampButtonPressed) {
+            clampButtonPressed = true;
+            clampActivated = !clampActivated;
+        }
+        if (!gamepad1.a) {
+            clampButtonPressed = false;
+        }
+        if (clampActivated) {
+            DragonoidsGlobal.rightClamp.setPosition(clampClosed);
+            DragonoidsGlobal.leftClamp.setPosition(clampClosed);
+        }
+        else {
+            DragonoidsGlobal.rightClamp.setPosition(clampOpen);
+            DragonoidsGlobal.leftClamp.setPosition(clampOpen);
         }
 
         this.outputTelemetry();
