@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -19,6 +20,7 @@ public class DragonoidsGlobal {
     // Sensors
     public static ColorSensor colorSensor;
     public static OpticalDistanceSensor opticalDistanceSensor;
+    public static LightSensor lightSensor;
 
     public static void init(HardwareMap hardwareMap) {
         rightOne = hardwareMap.dcMotor.get("rightOneDrive");
@@ -47,8 +49,9 @@ public class DragonoidsGlobal {
 
         colorSensor = hardwareMap.colorSensor.get("color");
         opticalDistanceSensor = hardwareMap.opticalDistanceSensor.get("distance");
+        lightSensor = hardwareMap.lightSensor.get("light");
         // Enable to read reflected light and disable to read emitted light
-        colorSensor.enableLed(true);
+        enableLEDs(true);
     }
     public static void init(HardwareMap hardwareMap, boolean resetDriveMotors) {
         init(hardwareMap);
@@ -56,6 +59,11 @@ public class DragonoidsGlobal {
             // Must call engageDriveMotors() after this to reengage the motors
             resetDriveMotors();
         }
+    }
+
+    public static void enableLEDs(boolean state) {
+        lightSensor.enableLed(state);
+        colorSensor.enableLed(state);
     }
 
     public static void setDrivePower(double rightPower, double leftPower) {

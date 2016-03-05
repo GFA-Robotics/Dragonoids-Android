@@ -10,6 +10,8 @@ public class DragonoidsTeleOp extends OpMode {
     @Override
     public void init() {
         DragonoidsGlobal.init(hardwareMap, true);
+        // We don't need the LEDs on the color and light sensors to be on during tele-op
+        DragonoidsGlobal.enableLEDs(false);
     }
     @Override
     public void start() {
