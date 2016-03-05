@@ -46,6 +46,13 @@ public class DragonoidsGlobal {
         // Enable to read reflected light and disable to read emitted light
         colorSensor.enableLed(true);
     }
+    public static void init(HardwareMap hardwareMap, boolean resetDriveMotors) {
+        init(hardwareMap);
+        if (resetDriveMotors) {
+            // Must call engageDriveMotors() after this to reengage the motors
+            resetDriveMotors();
+        }
+    }
 
     public static void setDrivePower(double rightPower, double leftPower) {
         rightOne.setPower(rightPower);
@@ -54,6 +61,14 @@ public class DragonoidsGlobal {
         leftTwo.setPower(leftPower);
     }
 
+    public static void resetDriveMotors() {
+        DragonoidsGlobal.rightSlider.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.leftSlider.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+    }
+    public static void engageDriveMotors() {
+        DragonoidsGlobal.rightSlider.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.leftSlider.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+    }
     public static void resetServos(){
         rightClimber.setPosition(0.0);
         leftClimber.setPosition(0.0);

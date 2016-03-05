@@ -35,9 +35,13 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         Right, Left, Forward, Backward
     }
 
-    public void initialize() {
+    public void initialize() throws InterruptedException {
         DragonoidsGlobal.init(hardwareMap);
         DragonoidsGlobal.stopAll();
+        // Reset drive motor encoders
+        DragonoidsGlobal.resetDriveMotors();
+        waitOneFullHardwareCycle();
+        DragonoidsGlobal.engageDriveMotors();
         // Set up the gyro sensor
         this.sensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
         this.gyroSensor = sensorManager.getDefaultSensor(this.sensorType);

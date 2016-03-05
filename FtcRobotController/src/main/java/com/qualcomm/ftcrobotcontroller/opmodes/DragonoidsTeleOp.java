@@ -9,7 +9,11 @@ import java.util.HashMap;
 public class DragonoidsTeleOp extends OpMode {
     @Override
     public void init() {
-        DragonoidsGlobal.init(hardwareMap);
+        DragonoidsGlobal.init(hardwareMap, true);
+    }
+    @Override
+    public void start() {
+        DragonoidsGlobal.engageDriveMotors();
     }
     @Override
     public void loop() {
