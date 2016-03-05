@@ -2,6 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -65,12 +66,12 @@ public class DragonoidsGlobal {
     }
 
     public static void resetDriveMotors() {
-        DragonoidsGlobal.rightSlider.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        DragonoidsGlobal.leftSlider.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.rightTwo.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.leftTwo.setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
     public static void engageDriveMotors() {
-        DragonoidsGlobal.rightSlider.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        DragonoidsGlobal.leftSlider.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.rightTwo.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.leftTwo.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
     }
     public static void resetServos(){
         rightClimber.setPosition(0.0);
