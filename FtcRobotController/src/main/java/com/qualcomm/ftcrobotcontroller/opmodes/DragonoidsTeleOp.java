@@ -11,7 +11,7 @@ public class DragonoidsTeleOp extends OpMode {
     public void init() {
         DragonoidsGlobal.init(hardwareMap, true);
         // We don't need the LEDs on the color and light sensors to be on during tele-op
-        DragonoidsGlobal.enableLEDs(false);
+        DragonoidsGlobal.enableLEDs(true);
     }
     @Override
     public void start() {
@@ -144,6 +144,7 @@ public class DragonoidsTeleOp extends OpMode {
         telemetry.addData("Dispenser motor power", DragonoidsGlobal.dispenser.getPower());
         telemetry.addData("Right Two", DragonoidsGlobal.rightTwo.getCurrentPosition());
         telemetry.addData("Left  Two", DragonoidsGlobal.leftTwo.getCurrentPosition());
+        telemetry.addData("Light sensor", DragonoidsGlobal.lightSensor.getLightDetectedRaw());
         //telemetry.addData("Servo Position", DragonoidsGlobal.gate.getPosition());
     }
     @Override
