@@ -122,6 +122,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         DragonoidsGlobal.stopMotors();
     }
     // TODO: doesn't really work for reverse (the while condition is wrong)
+    // TODO: why aren't the encoder values reset or compared against a previous value?
     public void drive(Direction direction, int distance) throws InterruptedException {
         if (direction == Direction.Forward) {
             DragonoidsGlobal.setDrivePower(drivePower, drivePower);
