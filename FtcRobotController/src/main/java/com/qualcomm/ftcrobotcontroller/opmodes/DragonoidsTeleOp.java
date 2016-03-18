@@ -11,7 +11,7 @@ public class DragonoidsTeleOp extends OpMode {
     public void init() {
         DragonoidsGlobal.init(hardwareMap, true);
         // We don't need the LEDs on the color and light sensors to be on during tele-op
-        DragonoidsGlobal.enableLEDs(false);
+        DragonoidsGlobal.enableLEDs(true);
     }
     @Override
     public void start() {
@@ -33,21 +33,14 @@ public class DragonoidsTeleOp extends OpMode {
 
         // Conveyor
         final double conveyorMaxPower = 0.70;
-        final double conveyorMidPower = 0.45;
-        final double conveyorMinPower = 0.10;
-        if (gamepad2.right_trigger > 0.8) {
+        final double conveyorMinPower = 0.45;
+        if (gamepad2.right_bumper) {
             // Turn on the conveyor
             DragonoidsGlobal.conveyor.setPower(conveyorMaxPower);
         }
-        else if (gamepad2.right_trigger > 0.4) {
-            DragonoidsGlobal.conveyor.setPower(conveyorMidPower);
-        }
-        else if (gamepad2.right_trigger > 0.1) {
-            DragonoidsGlobal.conveyor.setPower(conveyorMinPower);
-        }
-        else if (gamepad2.left_trigger > 0.2) {
+        else if (gamepad2.left_bumper) {
             // Reverse the conveyor
-            DragonoidsGlobal.conveyor.setPower(-conveyorMidPower);
+            DragonoidsGlobal.conveyor.setPower(-conveyorMinPower);
         }
         else {
             // Stop conveyor motor
@@ -83,18 +76,20 @@ public class DragonoidsTeleOp extends OpMode {
             DragonoidsGlobal.autonomousClimbers.setPosition(autonomousClimbersClosed);
         }
 
-        // Slider
+        // Sliders
         final double sliderForwardPower = 1.0;
-        final double sliderBackwardPower = -0.5;
-        if (gamepad2.right_bumper) {
-            // Move the slider forward
-            DragonoidsGlobal.rightSlider.setPower(sliderForwardPower);
-            DragonoidsGlobal.leftSlider.setPower(sliderForwardPower);
+        final double sliderBackwardPower = -0.8;
+        if (gamepad2.right_trigger > 0.1) {
+            // Move the sliders forward
+            double sliderPower = gamepad2.right_trigger * sliderForwardPower;
+            DragonoidsGlobal.rightSlider.setPower(sliderPower);
+            DragonoidsGlobal.leftSlider.setPower(sliderPower);
         }
-        else if (gamepad2.left_bumper) {
-            // Reverse the slider
-            DragonoidsGlobal.rightSlider.setPower(sliderBackwardPower);
-            DragonoidsGlobal.leftSlider.setPower(sliderBackwardPower);
+        else if (gamepad2.left_trigger > 0.1) {
+            // Reverse the sliders
+            double sliderPower = gamepad2.left_trigger * sliderBackwardPower;
+            DragonoidsGlobal.rightSlider.setPower(sliderPower);
+            DragonoidsGlobal.leftSlider.setPower(sliderPower);
         }
         else {
             DragonoidsGlobal.rightSlider.setPower(0.0);
@@ -149,6 +144,7 @@ public class DragonoidsTeleOp extends OpMode {
         telemetry.addData("Dispenser motor power", DragonoidsGlobal.dispenser.getPower());
         telemetry.addData("Right Two", DragonoidsGlobal.rightTwo.getCurrentPosition());
         telemetry.addData("Left  Two", DragonoidsGlobal.leftTwo.getCurrentPosition());
+        telemetry.addData("Light sensor", DragonoidsGlobal.lightSensor.getLightDetectedRaw());
         //telemetry.addData("Servo Position", DragonoidsGlobal.gate.getPosition());
     }
     @Override

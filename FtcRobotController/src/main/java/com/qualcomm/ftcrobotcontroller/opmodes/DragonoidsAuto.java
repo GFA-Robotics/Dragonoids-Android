@@ -21,8 +21,8 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     private final double drivePower = 0.4;
     private final double driveMinPower = 0.2;
     private final double turnPower = 0.4;
-    private final int step1Distance = 2000;
-    private final int step2Distance = 6200;
+    private final int step1Distance = 500;
+    private final int step2Distance = 6500;
 
     protected enum Alliance {
         Red, Blue
@@ -34,6 +34,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
     public void initialize() throws InterruptedException {
         DragonoidsGlobal.init(hardwareMap);
         DragonoidsGlobal.stopAll();
+        DragonoidsGlobal.enableLEDs(true);
         // Reset drive motor encoders
         DragonoidsGlobal.resetDriveMotors();
         waitOneFullHardwareCycle();
@@ -120,6 +121,8 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         }
         DragonoidsGlobal.stopMotors();
     }
+    // TODO: doesn't really work for reverse (the while condition is wrong)
+    // TODO: why aren't the encoder values reset or compared against a previous value?
     public void drive(Direction direction, int distance) throws InterruptedException {
         if (direction == Direction.Forward) {
             DragonoidsGlobal.setDrivePower(drivePower, drivePower);
@@ -133,11 +136,14 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         DragonoidsGlobal.stopMotors();
     }
     public void driveTime(Direction direction, long milliseconds) throws InterruptedException {
+        driveTime(direction, milliseconds, this.drivePower);
+    }
+    public void driveTime(Direction direction, long milliseconds, double power) throws InterruptedException {
         if (direction == Direction.Forward) {
-            DragonoidsGlobal.setDrivePower(drivePower, drivePower);
+            DragonoidsGlobal.setDrivePower(power, power);
         }
         if (direction == Direction.Backward) {
-            DragonoidsGlobal.setDrivePower(-drivePower, -drivePower);
+            DragonoidsGlobal.setDrivePower(-power, -power);
         }
         double startTime = getRuntime();
         double runTime = milliseconds / 1000.0;
@@ -162,6 +168,12 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         this.turn(turnDirection, 45);
         // Drive forward to the beacon zone
         this.drive(Direction.Forward, step2Distance);
+        final int whiteLineThreshold = 380;
+        while (DragonoidsGlobal.lightSensor.getLightDetectedRaw() < whiteLineThreshold) {
+            DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
+        }
+        DragonoidsGlobal.stopMotors();
+        this.driveTime(Direction.Backward, 500, driveMinPower);
         //this.driveTime(Direction.Forward, 2500);
         // Turn 45 degrees again
         this.turn(turnDirection, 45);
@@ -169,7 +181,7 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         final int odsBaseValue = DragonoidsGlobal.opticalDistanceSensor.getLightDetectedRaw();
         final int odsThreshold = 10;
         double odsStartTime = getRuntime();
-        double maxRunTime = 6; // 6 seconds before watchdog timer kicks in and stops the robot
+        double maxRunTime = 4; // 4 seconds before watchdog timer kicks in and stops the robot
         while (DragonoidsGlobal.opticalDistanceSensor.getLightDetectedRaw() < (odsBaseValue + odsThreshold) && (getRuntime() - odsStartTime) < maxRunTime) {
             final int lightThreshold = 300;
             if (DragonoidsGlobal.lightSensor.getLightDetectedRaw() < lightThreshold) {
