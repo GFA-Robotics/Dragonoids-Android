@@ -171,7 +171,14 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         double odsStartTime = getRuntime();
         double maxRunTime = 6; // 6 seconds before watchdog timer kicks in and stops the robot
         while (DragonoidsGlobal.opticalDistanceSensor.getLightDetectedRaw() < (odsBaseValue + odsThreshold) && (getRuntime() - odsStartTime) < maxRunTime) {
-            DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
+            final int lightThreshold = 300;
+            if (DragonoidsGlobal.lightSensor.getLightDetectedRaw() < lightThreshold) {
+                // Line wasn't found
+            }
+            else {
+                // Line is underneath; continue in a straight line
+                DragonoidsGlobal.setDrivePower(driveMinPower, driveMinPower);
+            }
             waitOneFullHardwareCycle();
         }
         DragonoidsGlobal.stopMotors();
