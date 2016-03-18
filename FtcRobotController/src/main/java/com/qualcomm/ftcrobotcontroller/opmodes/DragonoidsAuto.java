@@ -229,6 +229,9 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
             this.drive(Direction.Forward, beaconPressDistance);
             sleep(500);
             this.drive(Direction.Backward, beaconPressDistance);
+            sleep(500);
+            // Turn back to original orientation
+            this.turn(beaconTurnDirection == Direction.Right ? Direction.Left : Direction.Right, beaconPressArc);
         }
 
         // Drive forward or extend arm to push the correct button
