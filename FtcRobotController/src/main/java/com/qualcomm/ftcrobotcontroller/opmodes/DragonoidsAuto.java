@@ -186,15 +186,39 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         DragonoidsGlobal.autonomousClimbers.setPosition(0.0);
         sleep(1000);
         DragonoidsGlobal.autonomousClimbers.setPosition(1.0);
-        // Detect color of the beacon
-        if (DragonoidsGlobal.colorSensor.red() > DragonoidsGlobal.colorSensor.blue()) {
-            // Red color detected
-
+        // Detect which button of the beacon to press
+        final float beaconScanArc = 10; // The size of the arc (in degrees) that the robot will turn to scan the beacon's colors
+        final float beaconPressArc = 5; // The number of degrees the robot will turn (left or right) to press the a beacon button
+        final int beaconPressDistance = 500; // The distance the robot will travel to press a beacon button
+        Alliance leftBeaconColor = null;
+        Alliance rightBeaconColor = null;
+        this.turn(Direction.Left, beaconScanArc / 2);
+        waitOneFullHardwareCycle();
+        leftBeaconColor = (DragonoidsGlobal.colorSensor.red() > DragonoidsGlobal.colorSensor.blue()) ? Alliance.Red : Alliance.Blue;
+        this.turn(Direction.Right, beaconScanArc);
+        waitOneFullHardwareCycle();
+        rightBeaconColor = (DragonoidsGlobal.colorSensor.red() > DragonoidsGlobal.colorSensor.blue()) ? Alliance.Red : Alliance.Blue;
+        this.turn(Direction.Left, beaconScanArc / 2);
+        // Press the correct button on the beacon
+        if (leftBeaconColor != rightBeaconColor) {
+            // Only press a button if a difference in colors is detected
+            Direction beaconTurnDirection = null;
+            if (alliance == leftBeaconColor) {
+                beaconTurnDirection = Direction.Left;
+            }
+            else if (alliance == rightBeaconColor) {
+                beaconTurnDirection = Direction.Right;
+            }
+            else {
+                return;
+            }
+            this.turn(beaconTurnDirection, beaconPressArc);
+            // Drive forward to press the button
+            this.drive(Direction.Forward, beaconPressDistance);
+            sleep(500);
+            this.drive(Direction.Backward, beaconPressDistance);
         }
-        else {
-            // Blue color detected
 
-        }
         // Drive forward or extend arm to push the correct button
 
         // Deposit climbers in the bucket behind the beacon
