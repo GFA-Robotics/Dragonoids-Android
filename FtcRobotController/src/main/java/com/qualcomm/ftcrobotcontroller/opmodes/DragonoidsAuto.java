@@ -153,6 +153,11 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         DragonoidsGlobal.stopMotors();
     }
 
+    private boolean continueToFindLine (int odsBaseValue, double startTime) {
+        final int odsThreshold = 10;
+        final double maxRunTime = 10; // Seconds before watchdog timer kicks in and stops the robot
+        return DragonoidsGlobal.opticalDistanceSensor.getLightDetectedRaw() < (odsBaseValue + odsThreshold) && (getRuntime() - startTime) < maxRunTime;
+    }
     public void autonomous(Alliance alliance) throws InterruptedException {
         this.initialize();
         // Set turning direction for first movements based on alliance color
@@ -179,13 +184,42 @@ public class DragonoidsAuto extends LinearOpMode implements SensorEventListener 
         this.turn(turnDirection, 45);
         // Drive forward to color detection distance
         final int odsBaseValue = DragonoidsGlobal.opticalDistanceSensor.getLightDetectedRaw();
-        final int odsThreshold = 10;
-        double odsStartTime = getRuntime();
-        double maxRunTime = 4; // 4 seconds before watchdog timer kicks in and stops the robot
-        while (DragonoidsGlobal.opticalDistanceSensor.getLightDetectedRaw() < (odsBaseValue + odsThreshold) && (getRuntime() - odsStartTime) < maxRunTime) {
+        double startTime = getRuntime();
+        while (continueToFindLine(odsBaseValue, startTime)) {
             final int lightThreshold = 300;
             if (DragonoidsGlobal.lightSensor.getLightDetectedRaw() < lightThreshold) {
-                // Line wasn't found
+                // Try to find the line
+                while (continueToFindLine(odsBaseValue, startTime) && DragonoidsGlobal.lightSensor.getLightDetectedRaw() < lightThreshold) {
+                    // Move forward if not found loop
+                    double sideToSideStart = getRuntime();
+                    final double sideToSideFrequency = 1; // Seconds spent turning to each side
+                    while (continueToFindLine(odsBaseValue, startTime) && DragonoidsGlobal.lightSensor.getLightDetectedRaw() < lightThreshold) {
+                        // Move from side to side if not found loop
+                        // Turn left to right if red and right to left if blue
+                        if ((getRuntime() - sideToSideStart) < sideToSideFrequency) {
+                            if (alliance == Alliance.Red) {
+                                DragonoidsGlobal.setDrivePower(-turnPower, turnPower);
+                            }
+                            if (alliance == Alliance.Blue) {
+                                DragonoidsGlobal.setDrivePower(turnPower, -turnPower);
+                            }
+                        }
+                        else if ((getRuntime() - sideToSideStart) < (2 * sideToSideFrequency)) {
+                            if (alliance == Alliance.Red) {
+                                DragonoidsGlobal.setDrivePower(turnPower, -turnPower);
+                            }
+                            if (alliance == Alliance.Blue) {
+                                DragonoidsGlobal.setDrivePower(-turnPower, turnPower);
+                            }
+                        }
+                        else {
+                            DragonoidsGlobal.stopMotors();
+                            break;
+                        }
+                        waitOneFullHardwareCycle();
+                    }
+                    driveTime(Direction.Forward, 750, driveMinPower);
+                }
             }
             else {
                 // Line is underneath; continue in a straight line
