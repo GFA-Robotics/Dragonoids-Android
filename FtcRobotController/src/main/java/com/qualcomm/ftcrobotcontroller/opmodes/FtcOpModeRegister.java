@@ -68,6 +68,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("DragonoidsAutoBlue", DragonoidsAutoBlue.class);
     manager.register("DragonoidsTestSensors", DragonoidsTestSensors.class);
     manager.register("DragonoidsTestSliders", DragonoidsTestSliders.class);
+    manager.register("DragonoidsTestController", DragonoidsTestController.class);
 
     /*
      * Uncomment any of the following lines if you want to register an op mode.

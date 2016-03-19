@@ -82,14 +82,39 @@ public class DragonoidsTeleOp extends OpMode {
         if (gamepad2.right_trigger > 0.1) {
             // Move the sliders forward
             double sliderPower = gamepad2.right_trigger * sliderForwardPower;
-            DragonoidsGlobal.rightSlider.setPower(sliderPower);
-            DragonoidsGlobal.leftSlider.setPower(sliderPower);
+            //DragonoidsGlobal.rightSlider.setPower(sliderPower);
+            //DragonoidsGlobal.leftSlider.setPower(sliderPower);
         }
         else if (gamepad2.left_trigger > 0.1) {
             // Reverse the sliders
             double sliderPower = gamepad2.left_trigger * sliderBackwardPower;
-            DragonoidsGlobal.rightSlider.setPower(sliderPower);
-            DragonoidsGlobal.leftSlider.setPower(sliderPower);
+            //DragonoidsGlobal.rightSlider.setPower(sliderPower);
+            //DragonoidsGlobal.leftSlider.setPower(sliderPower);
+        }
+        else {
+            //DragonoidsGlobal.rightSlider.setPower(0.0);
+            //DragonoidsGlobal.leftSlider.setPower(0.0);
+        }
+        // Alternate control for sliders while the Logitech triggers aren't working properly
+        if (gamepad2.dpad_up) {
+            // Extend quickly
+            DragonoidsGlobal.rightSlider.setPower(sliderForwardPower);
+            DragonoidsGlobal.leftSlider.setPower(sliderForwardPower);
+        }
+        else if (gamepad2.dpad_right) {
+            // Extend slowly
+            DragonoidsGlobal.rightSlider.setPower(sliderForwardPower / 2.0);
+            DragonoidsGlobal.leftSlider.setPower(sliderForwardPower / 2.0);
+        }
+        else if (gamepad2.dpad_down) {
+            // Retract quickly
+            DragonoidsGlobal.rightSlider.setPower(sliderBackwardPower);
+            DragonoidsGlobal.leftSlider.setPower(sliderBackwardPower);
+        }
+        else if (gamepad2.dpad_left) {
+            // Retract slowly
+            DragonoidsGlobal.rightSlider.setPower(sliderBackwardPower / 2.0);
+            DragonoidsGlobal.leftSlider.setPower(sliderBackwardPower / 2.0);
         }
         else {
             DragonoidsGlobal.rightSlider.setPower(0.0);
