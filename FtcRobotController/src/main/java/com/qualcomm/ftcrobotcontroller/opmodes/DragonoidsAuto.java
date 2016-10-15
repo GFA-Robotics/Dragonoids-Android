@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //silly comment
+//another silly comment
 public class DragonoidsAuto extends LinearOpMode implements SensorEventListener {
     // Gyro sensor
     private SensorManager sensorManager;
