@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class DragonoidsGlobal {
     // Drive motors
-    public static DcMotor rightOne, rightTwo, leftOne, leftTwo;
+    public static DcMotor rightFront, rightBack, leftFront, leftBack;
     // Aux motors
     public static DcMotor conveyor, dispenser;
     // Slider motors
@@ -23,13 +23,13 @@ public class DragonoidsGlobal {
     public static LightSensor lightSensor;
 
     public static void init(HardwareMap hardwareMap) {
-        rightOne = hardwareMap.dcMotor.get("rightOneDrive");
-        rightTwo = hardwareMap.dcMotor.get("rightTwoDrive");
-        leftOne = hardwareMap.dcMotor.get("leftOneDrive");
-        leftTwo = hardwareMap.dcMotor.get("leftTwoDrive");
+        rightFront = hardwareMap.dcMotor.get("rightFrontDrive");
+        rightBack = hardwareMap.dcMotor.get("rightBackDrive");
+        leftFront = hardwareMap.dcMotor.get("leftFrontDrive");
+        leftBack = hardwareMap.dcMotor.get("leftBackDrive");
 
-        rightOne.setDirection(DcMotor.Direction.REVERSE);
-        leftTwo.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
 
         conveyor = hardwareMap.dcMotor.get("conveyor");
         dispenser = hardwareMap.dcMotor.get("dispenser");
@@ -66,20 +66,24 @@ public class DragonoidsGlobal {
         colorSensor.enableLed(state);
     }
 
-    public static void setDrivePower(double rightPower, double leftPower) {
-        rightOne.setPower(rightPower);
-        rightTwo.setPower(rightPower);
-        leftOne.setPower(leftPower);
-        leftTwo.setPower(leftPower);
+    public static void setDrivePower(double rightFrontPower, double leftFrontPower, double rightBackPower, double leftBackPower) {
+        rightFront.setPower(rightFrontPower);
+        rightBack.setPower(leftFrontPower);
+        leftFront.setPower(rightBackPower);
+        leftBack.setPower(leftBackPower);
     }
 
     public static void resetDriveMotors() {
-        DragonoidsGlobal.rightTwo.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        DragonoidsGlobal.leftTwo.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.rightBack.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.leftBack.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.rightFront.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        DragonoidsGlobal.leftFront.setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
     public static void engageDriveMotors() {
-        DragonoidsGlobal.rightTwo.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        DragonoidsGlobal.leftTwo.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.rightBack.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.leftBack.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.rightFront.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        DragonoidsGlobal.leftFront.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
     }
     public static void resetServos(){
         rightClimber.setPosition(0.0);

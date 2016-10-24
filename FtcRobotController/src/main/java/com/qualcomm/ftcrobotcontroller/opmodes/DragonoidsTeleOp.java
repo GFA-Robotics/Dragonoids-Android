@@ -40,6 +40,8 @@ public class DragonoidsTeleOp extends OpMode {
         double wheelPowerRB = Range.clip(processedY, -1.0, 1.0);
         double wheelPowerLB = Range.clip(-processedX, -1.0, 1.0);
 
+        DragonoidsGlobal.setDrivePower(wheelPowerRF, wheelPowerLF, wheelPowerRB, wheelPowerLB);
+
         /*
         double rightDrivePower = Range.clip(forwardAmount - turningAmount, -1.0, 1.0);
         double leftDrivePower = Range.clip(forwardAmount + turningAmount, -1.0, 1.0);
