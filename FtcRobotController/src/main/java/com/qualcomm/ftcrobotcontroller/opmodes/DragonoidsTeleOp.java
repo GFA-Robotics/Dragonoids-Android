@@ -23,13 +23,28 @@ public class DragonoidsTeleOp extends OpMode {
         float forwardAmount = -gamepad1.left_stick_y;
         float turningAmount = -gamepad1.right_stick_x;
 
+        // @galika1080 Starting to implement some wacky code for controlling the mecanum wheels
+        // we're going to convert to polar, add pi/4 to theta, and convert back to cartesian.
+        double r = Math.sqrt(Math.pow(gamepad1.right_stick_x, 2) + math.pow(gamepad1.right_stick_y, 2));
+        double t = Math.atan(y/x); // over to polar
+        double newt = t + (Math.PI / 4); // adjust theta
+        double processedX = Math.cos(newt)*r;
+        double processedY = Math.sin(newt)*r; // back to cartesian
+        // end @galika1080's wacky code
+
         forwardAmount = Range.clip(scaleInput(forwardAmount), -1, 1);
         turningAmount = Range.clip(scaleInput(turningAmount), -1, 1);
 
-        // TEMPORARY HACK OF A FIX OH GOD NO PLEASE FIX THIS
+        double wheelPowerRF = Range.clip(-processedX, -1.0, 1.0);
+        double wheelPowerLF = Range.clip(processedY, -1.0, 1.0);
+        double wheelPowerRB = Range.clip(processedY, -1.0, 1.0);
+        double wheelPowerLB = Range.clip(-processedX, -1.0, 1.0);
+
+        /*
         double rightDrivePower = Range.clip(forwardAmount - turningAmount, -1.0, 1.0);
         double leftDrivePower = Range.clip(forwardAmount + turningAmount, -1.0, 1.0);
         DragonoidsGlobal.setDrivePower(rightDrivePower, leftDrivePower);
+        */
 
         // Conveyor
         final double conveyorMaxPower = 0.70;
