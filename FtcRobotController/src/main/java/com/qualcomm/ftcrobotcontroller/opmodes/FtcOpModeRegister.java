@@ -62,7 +62,8 @@ public class FtcOpModeRegister implements OpModeRegister {
     //manager.register("K9Line", K9Line.class);
     //manager.register ("PushBotAuto", PushBotAuto.class);
     //manager.register ("PushBotManual", PushBotManual.class);
-    manager.register("DragonoidsTeleOp", DragonoidsTeleOp.class);
+    manager.register("DragonoidsTeleOpSimple", DragonoidsTeleOp.class);
+    manager.register("DragonoidsAutoNew", DragonoidsTeleOp.class);
     //manager.register("DragonoidsTeleOpSimple", DragonoidsTeleOpSimple.class);
     manager.register("DragonoidsAutoRed", DragonoidsAutoRed.class);
     manager.register("DragonoidsAutoBlue", DragonoidsAutoBlue.class);
